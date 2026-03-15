@@ -26,7 +26,7 @@
 - **Manipulated Media** - Detects edited, photoshopped, or doctored content  
 - **Social Media Scanner** - Real-time scanning on Twitter/X, Facebook, Instagram, LinkedIn, Reddit, TikTok
 
-**🔗 Repository:** 
+**🔗 Repository: https://github.com/AditiPandita/HackCrux-UnReal---Chrome-Extension** 
 ---
 
 ## 🚀 Quick Start
