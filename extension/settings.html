@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UnReal Settings</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: #f3f4f6;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 32px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .header .logo {
+      width: 48px;
+      height: 48px;
+      color: #4f46e5;
+      margin-bottom: 12px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .section {
+      margin-bottom: 32px;
+      padding-bottom: 32px;
+      border-bottom: 2px solid #f3f4f6;
+    }
+
+    .section:last-child {
+      border-bottom: none;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-description {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    input[type="password"],
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .input-hint {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .toggle-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .toggle-group:last-child {
+      border-bottom: none;
+    }
+
+    .toggle-label {
+      flex: 1;
+    }
+
+    .toggle-label-title {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+
+    .toggle-label-desc {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 48px;
+      height: 26px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #d1d5db;
+      transition: 0.3s;
+      border-radius: 26px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: #4f46e5;
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(22px);
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.2s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .status {
+      text-align: center;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 16px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .status.success {
+      display: block;
+      background: #dcfce7;
+      color: #16a34a;
+    }
+
+    .status.error {
+      display: block;
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .current-key {
+      background: #f3f4f6;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+
+    .links {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .links a {
+      color: #4f46e5;
+      text-decoration: none;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    .divider {
+      color: #d1d5db;
+      margin: 0 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <path d="M9 12l2 2 4-4"/>
+      </svg>
+      <h1>UnReal Settings</h1>
+      <p>Configure AI detection and analysis preferences</p>
+    </div>
+
+    <!-- API Key Section -->
+    <div class="section">
+      <div class="section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;">
+          <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+        </svg>
+        API Configuration
+      </div>
+      <div class="section-description">
+        Configure API credentials for advanced AI image detection features.
+      </div>
+      
+      <div class="form-group">
+        <label for="api-key">Gemini API Key (Optional)</label>
+        <div class="current-key" id="current-key" style="display: none;">
+          Current: <span id="masked-key"></span>
+        </div>
+        <input type="password" id="api-key" placeholder="Enter your Gemini API key">
+        <p class="input-hint">
+          Used for advanced forensic analysis of images. Your API key is stored locally and never shared.<br>
+          <strong style="color: #f97316;">⚠️ Free tier rate limit:</strong> The extension automatically limits Gemini requests to avoid hitting rate limits (max 10 per minute with 6 second delays).
+        </p>
+      </div>
+
+      <button class="btn btn-primary" id="save-btn">Save API Key</button>
+    </div>
+
+    <!-- General Settings -->
+    <div class="section">
+      <div class="section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 1v6m0 6v6m9-9h-6m-6 0H3m15.364 6.364l-4.243-4.243m-6.364 0l-4.243 4.243m12.728 0l-4.242-4.243m-6.364 0l-4.243-4.243"/>
+        </svg>
+        General Settings
+      </div>
+      
+      <div class="toggle-group">
+        <div class="toggle-label">
+          <div class="toggle-label-title">Enable Extension</div>
+          <div class="toggle-label-desc">Turn UnReal analysis on/off globally</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="enabled-toggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-group">
+        <div class="toggle-label">
+          <div class="toggle-label-title">Segment-Based Analysis</div>
+          <div class="toggle-label-desc">Analyze content by paragraphs/sections (recommended)</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="segment-analysis-toggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-group">
+        <div class="toggle-label">
+          <div class="toggle-label-title">Image Analysis</div>
+          <div class="toggle-label-desc">Detect AI-generated images on pages</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="image-analysis-toggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-group">
+        <div class="toggle-label">
+          <div class="toggle-label-title">LLM Tie-Breaker 🤖</div>
+          <div class="toggle-label-desc">Use Gemini AI only for uncertain cases (35-65 score). <strong>Requires API key.</strong> Improves accuracy by ~15%.</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="llm-tiebreaker-toggle">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Website Lists -->
+    <div class="section">
+      <div class="section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        Website Control
+      </div>
+      <div class="section-description">
+        Control which websites UnReal runs on. Leave empty to run on all sites.
+      </div>
+      
+      <div class="form-group">
+        <label for="exclude-list">Exclude Websites (one per line)</label>
+        <textarea id="exclude-list" placeholder="example.com&#10;trusted-site.org"></textarea>
+        <p class="input-hint">UnReal will NOT run on these domains</p>
+      </div>
+
+      <div class="form-group">
+        <label for="include-list">Include Only (one per line)</label>
+        <textarea id="include-list" placeholder="news-site.com&#10;social-media.com"></textarea>
+        <p class="input-hint">If specified, UnReal will ONLY run on these domains</p>
+      </div>
+
+      <button class="btn btn-primary" id="save-lists-btn">Save Website Lists</button>
+    </div>
+
+    <!-- Cache Management -->
+    <div class="section">
+      <div class="section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <path d="M7 15h10M7 11h10"/>
+        </svg>
+        Cache Management
+      </div>
+      <div class="section-description">
+        UnReal caches analysis results to improve performance and reduce API calls.
+      </div>
+      
+      <div id="cache-stats" style="margin-bottom: 16px;"></div>
+      
+      <button class="btn btn-secondary" id="clear-cache-btn">Clear All Caches</button>
+    </div>
+
+    <div class="status" id="status-msg"></div>
+
+    <div class="links">
+      <a href="https://makersuite.google.com/app/apikey" target="_blank">Get API Key</a>
+      <span class="divider">|</span>
+      <a href="https://github.com" target="_blank">Documentation</a>
+      <span class="divider">|</span>
+      <a href="popup.html">Back to Extension</a>
+    </div>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>

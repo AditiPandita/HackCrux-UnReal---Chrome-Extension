@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=400">
+  <title>UnReal - AI Content Detector</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 400px;
+      min-height: 500px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 13px;
+      color: #1f2937;
+      background: #f9fafb;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      color: #fff;
+      padding: 16px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header .logo {
+      width: 28px;
+      height: 28px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .header-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      border-radius: 8px;
+      padding: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.05);
+    }
+
+    .header-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: white;
+    }
+
+    .url-bar {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .url-icon {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    /* Tab Navigation */
+    .tab-nav {
+      display: flex;
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 0 8px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px 8px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      color: #4f46e5;
+      background: #f9fafb;
+    }
+
+    .tab-btn.active {
+      color: #4f46e5;
+      border-bottom-color: #4f46e5;
+    }
+
+    .tab-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none;
+      padding: 16px;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title svg {
+      width: 16px;
+      height: 16px;
+      stroke: #6366f1;
+    }
+
+    /* Score Display */
+    .score-card {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .risk-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .risk-low { background: #dcfce7; color: #15803d; }
+    .risk-medium { background: #fed7aa; color: #c2410c; }
+    .risk-high { background: #fecaca; color: #b91c1c; }
+
+    .score {
+      font-size: 42px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .score span { font-size: 18px; color: #9ca3af; }
+
+    .score-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    /* Manual Analysis Section */
+    .analysis-section {
+      margin-bottom: 16px;
+    }
+
+    .analysis-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 100px;
+      transition: border-color 0.2s;
+    }
+
+    .analysis-input:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
+
+    .analysis-input::placeholder {
+      color: #9ca3af;
+    }
+
+    .analyze-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .analyze-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .analyze-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .analyze-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* File Upload */
+    .file-upload {
+      border: 2px dashed #e5e7eb;
+      border-radius: 8px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .file-upload:hover {
+      border-color: #4f46e5;
+      background: #f9fafb;
+    }
+
+    .file-upload.dragover {
+      border-color: #4f46e5;
+      background: #eef2ff;
+    }
+
+    .file-upload svg {
+      width: 40px;
+      height: 40px;
+      stroke: #9ca3af;
+      margin-bottom: 8px;
+    }
+
+    .file-upload p {
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .file-upload span {
+      color: #4f46e5;
+      font-weight: 600;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .image-preview {
+      margin-top: 12px;
+      border-radius: 8px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .image-preview img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      background: #f3f4f6;
+    }
+
+    /* Results Display */
+    .result-box {
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .result-box.show { display: block; }
+    .result-box.success { background: #dcfce7; border: 1px solid #22c55e; }
+    .result-box.warning { background: #fef3c7; border: 1px solid #f59e0b; }
+    .result-box.error { background: #fecaca; border: 1px solid #ef4444; }
+    .result-box.info { background: #dbeafe; border: 1px solid #3b82f6; }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .result-header svg { width: 20px; height: 20px; }
+
+    .result-details {
+      font-size: 12px;
+      color: #4b5563;
+      line-height: 1.6;
+    }
+
+    .result-score {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+
+    /* Settings Panel */
+    .settings-panel {
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 16px;
+      display: none;
+    }
+
+    .settings-panel.active { display: block; }
+
+    .setting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .setting-item:last-child { border-bottom: none; }
+
+    .setting-label {
+      flex: 1;
+    }
+
+    .setting-title {
+      font-weight: 600;
+      color: #1f2937;
+      font-size: 13px;
+    }
+
+    .setting-desc {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #cbd5e1;
+      border-radius: 24px;
+      transition: 0.3s;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.3s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background: #4f46e5;
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Backend Status */
+    .backend-status {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .status-item {
+      flex: 1;
+      padding: 10px;
+      background: #f9fafb;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .status-label {
+      font-size: 10px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .status-badge.online { background: #dcfce7; color: #166534; }
+    .status-badge.offline { background: #fee2e2; color: #991b1b; }
+    .status-badge.checking { background: #e0e7ff; color: #4338ca; }
+
+    /* Cache Stats */
+    .cache-stats {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .cache-stat {
+      flex: 1;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .cache-stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #4f46e5;
+    }
+
+    .cache-stat-label {
+      font-size: 10px;
+      color: #6b7280;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* Reasons List */
+    .reasons-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .reason-item {
+      padding: 10px 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: #4b5563;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.5;
+    }
+
+    .reason-item:last-child { margin-bottom: 0; }
+
+    .reason-icon {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      background: #4f46e5;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* Quick Actions */
+    .action-btn {
+      width: 100%;
+      padding: 10px;
+      background: #f3f4f6;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .action-btn:hover {
+      background: #e5e7eb;
+      transform: translateY(-1px);
+    }
+
+    .action-btn.danger:hover {
+      background: #fecaca;
+      color: #dc2626;
+    }
+
+    .action-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* URL Input */
+    .url-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 13px;
+      transition: border-color 0.2s;
+    }
+
+    .url-input:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
+
+    /* Disabled Notice */
+    .disabled-notice {
+      background: #fef3c7;
+      border: 1px solid #fde047;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 16px;
+      font-size: 12px;
+      color: #92400e;
+      display: none;
+    }
+
+    .disabled-notice.visible { display: block; }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 40px 16px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e5e7eb;
+      border-top-color: #4f46e5;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Footer */
+    .footer {
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: #9ca3af;
+    }
+
+    .footer-link {
+      color: #6366f1;
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .footer-link:hover { text-decoration: underline; }
+
+    .version-badge {
+      background: #f3f4f6;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      color: #6b7280;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Summary Text */
+    .summary-text {
+      font-size: 13px;
+      color: #4b5563;
+      line-height: 1.6;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border-left: 3px solid #4f46e5;
+    }
+
+    .no-content {
+      text-align: center;
+      padding: 20px;
+      color: #6b7280;
+    }
+
+    .no-content svg {
+      width: 48px;
+      height: 48px;
+      stroke: #d1d5db;
+      margin-bottom: 12px;
+    }
+
+    /* Fake News Section */
+    .fake-news-result {
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+
+    .fake-news-result.verified { background: #dcfce7; }
+    .fake-news-result.unverified { background: #fef3c7; }
+    .fake-news-result.false { background: #fecaca; }
+
+    .verification-stats {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .stat-item {
+      text-align: center;
+      flex: 1;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: #6b7280;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <h1>
+        <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+        UnReal
+      </h1>
+      <div class="header-actions">
+        <button class="header-btn" id="refresh-btn" title="Refresh Analysis">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 4v6h-6M1 20v-6h6"/>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+          </svg>
+        </button>
+        <button class="header-btn" id="settings-toggle" title="Quick Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="url-bar" id="page-url">
+      <svg class="url-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+      <span>Loading...</span>
+    </div>
+  </div>
+
+  <!-- Quick Settings Panel -->
+  <div class="settings-panel" id="settings-panel">
+    <div class="setting-item">
+      <div class="setting-label">
+        <div class="setting-title">Enable Extension</div>
+        <div class="setting-desc">Turn UnReal on/off globally</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="enabled-toggle" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-label">
+        <div class="setting-title">Show Overlays</div>
+        <div class="setting-desc">Display badges on analyzed content</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="overlay-toggle" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-label">
+        <div class="setting-title">Text Analysis</div>
+        <div class="setting-desc">Detect AI-generated text</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="segment-toggle" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-label">
+        <div class="setting-title">Image Analysis</div>
+        <div class="setting-desc">Detect AI-generated images</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="image-toggle" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <!-- Backend Status -->
+    <div class="backend-status" id="backend-status">
+      <div class="status-item">
+        <div class="status-label">Image Server</div>
+        <span class="status-badge checking" id="image-status">Checking...</span>
+      </div>
+      <div class="status-item">
+        <div class="status-label">Text Server</div>
+        <span class="status-badge checking" id="text-status">Checking...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="overview">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+        <path d="M3 9h18M9 21V9"/>
+      </svg>
+      Overview
+    </button>
+    <button class="tab-btn" data-tab="text">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14,2 14,8 20,8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+      </svg>
+      Text
+    </button>
+    <button class="tab-btn" data-tab="image">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <polyline points="21 15 16 10 5 21"/>
+      </svg>
+      Image
+    </button>
+    <button class="tab-btn" data-tab="news">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/>
+        <path d="M18 14h-8"/>
+        <path d="M15 18h-5"/>
+        <path d="M10 6h8v4h-8z"/>
+      </svg>
+      News
+    </button>
+  </div>
+
+  <!-- Disabled Notice -->
+  <div class="disabled-notice" id="disabled-notice">
+    ⚠ Extension is currently disabled. Enable it in settings above.
+  </div>
+
+  <!-- Tab Contents -->
+  
+  <!-- Overview Tab -->
+  <div class="tab-content active" id="tab-overview">
+    <div class="loading" id="loading-status">
+      <div class="spinner"></div>
+      <div>Analyzing page...</div>
+    </div>
+
+    <div id="results" style="display: none;">
+      <div class="card score-card">
+        <div class="risk-badge" id="risk-badge">Low Risk</div>
+        <div class="score">
+          <span id="score-value">0</span><span>/100</span>
+        </div>
+        <div class="score-label">AI Detection Score</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          Detection Signals
+        </div>
+        <ul class="reasons-list" id="reasons-list"></ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4"/>
+            <path d="M12 8h.01"/>
+          </svg>
+          Summary
+        </div>
+        <div class="summary-text" id="summary-text">Analysis complete.</div>
+      </div>
+
+      <div class="card">
+        <button class="action-btn" id="clear-cache-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+          </svg>
+          Clear Page Cache
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Text Analysis Tab -->
+  <div class="tab-content" id="tab-text">
+    <div class="card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14,2 14,8 20,8"/>
+        </svg>
+        Manual Text Analysis
+      </div>
+      <p style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">
+        Paste text to check if it was generated by AI
+      </p>
+      <textarea class="analysis-input" id="text-input" placeholder="Paste text here to analyze...&#10;&#10;The text should be at least 50 characters for accurate results."></textarea>
+      <button class="analyze-btn" id="analyze-text-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+        Analyze Text
+      </button>
+      
+      <div class="result-box" id="text-result">
+        <div class="result-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4"/>
+            <path d="M12 8h.01"/>
+          </svg>
+          <span id="text-result-title">Analysis Result</span>
+        </div>
+        <div class="result-score" id="text-result-score">0%</div>
+        <div class="result-details" id="text-result-details"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Analysis Tab -->
+  <div class="tab-content" id="tab-image">
+    <div class="card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        Manual Image Analysis
+      </div>
+      <p style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">
+        Upload an image or paste a URL to check if it's AI-generated
+      </p>
+      
+      <div class="file-upload" id="image-dropzone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <p><span>Click to upload</span> or drag and drop</p>
+        <p style="font-size: 11px; color: #9ca3af; margin-top: 4px;">PNG, JPG, WEBP up to 10MB</p>
+      </div>
+      <input type="file" class="file-input" id="image-input" accept="image/*">
+      
+      <div style="text-align: center; margin: 12px 0; color: #9ca3af; font-size: 12px;">— or —</div>
+      
+      <input type="text" class="url-input" id="image-url-input" placeholder="Paste image URL here...">
+      
+      <div class="image-preview" id="image-preview">
+        <img id="preview-img" src="" alt="Preview">
+      </div>
+      
+      <button class="analyze-btn" id="analyze-image-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+        Analyze Image
+      </button>
+      
+      <div class="result-box" id="image-result">
+        <div class="result-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4"/>
+            <path d="M12 8h.01"/>
+          </svg>
+          <span id="image-result-title">Analysis Result</span>
+        </div>
+        <div class="result-score" id="image-result-score">0%</div>
+        <div class="result-details" id="image-result-details"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- News Verification Tab -->
+  <div class="tab-content" id="tab-news">
+    <div class="card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/>
+        </svg>
+        Fact Check / Fake News Detection
+      </div>
+      <p style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">
+        Paste a headline or claim to verify against trusted news sources
+      </p>
+      <textarea class="analysis-input" id="news-input" placeholder="Paste a headline or news claim to verify...&#10;&#10;Example: &quot;Scientists discover new cure for cancer&quot;"></textarea>
+      <button class="analyze-btn" id="verify-news-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 12l2 2 4-4"/>
+          <circle cx="12" cy="12" r="10"/>
+        </svg>
+        Verify Claim
+      </button>
+      
+      <div class="result-box" id="news-result">
+        <div class="result-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4"/>
+            <path d="M12 8h.01"/>
+          </svg>
+          <span id="news-result-title">Verification Result</span>
+        </div>
+        <div class="result-details" id="news-result-details"></div>
+        <div class="verification-stats" id="news-stats" style="display: none;">
+          <div class="stat-item">
+            <div class="stat-value" id="news-sources-count">0</div>
+            <div class="stat-label">Sources Found</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="news-trusted-count">0</div>
+            <div class="stat-label">Trusted Sources</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="news-confidence">0%</div>
+            <div class="stat-label">Confidence</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Current Page News Analysis -->
+    <div class="card" id="page-news-card" style="display: none;">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 16v-4"/>
+          <path d="M12 8h.01"/>
+        </svg>
+        Current Page Analysis
+      </div>
+      <div id="page-news-content"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span>UnReal</span>
+      <span class="version-badge">v2.5</span>
+    </div>
+    <a href="settings.html" target="_blank" class="footer-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+        <polyline points="15 3 21 3 21 9"/>
+        <line x1="10" y1="14" x2="21" y2="3"/>
+      </svg>
+      Advanced Settings
+    </a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

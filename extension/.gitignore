@@ -1,0 +1,8 @@
+﻿backend/model/
+backend/text_model/
+backend/social_media_tuned_model/
+backend/dataset/
+
+.env
+node_modules/
+*.onnx

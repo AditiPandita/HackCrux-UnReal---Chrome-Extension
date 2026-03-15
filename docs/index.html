@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UnReal – AI Content Detection Browser Extension</title>
+  <meta name="description"
+    content="Detect AI-generated text, images, and videos in real-time with UnReal, an advanced Chrome extension for misinformation and deepfake detection." />
+  <meta name="keywords"
+    content="AI detection, deepfake, misinformation, Chrome extension, fake news, AI-generated content" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0b0b0f 0%, #1a1a2e 50%, #0b0b0f 100%);
+      color: #ffffff;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 64px 24px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .logo {
+      font-size: 4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      letter-spacing: -2px;
+    }
+
+    .tagline {
+      font-size: 1.5rem;
+      color: #a0a0ff;
+      margin-bottom: 24px;
+      font-weight: 300;
+    }
+
+    .description {
+      color: #b8b8d0;
+      font-size: 1.15rem;
+      max-width: 700px;
+      margin: 0 auto 40px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+
+    .btn {
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+    }
+
+    .btn.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 24px;
+      color: #ffffff;
+    }
+
+    .section {
+      margin-bottom: 80px;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .section-title h2 {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: linear-gradient(135deg, rgba(20, 20, 28, 0.9) 0%, rgba(30, 30, 42, 0.9) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 32px;
+      backdrop-filter: blur(20px);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(102, 126, 234, 0.5);
+      box-shadow: 0 12px 40px rgba(102, 126, 234, 0.15);
+    }
+
+    .card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+    }
+
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .card p {
+      color: #a0a0b8;
+      font-size: 1rem;
+    }
+
+    .install-card {
+      background: linear-gradient(135deg, rgba(20, 20, 28, 0.95) 0%, rgba(30, 30, 42, 0.95) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 48px;
+      backdrop-filter: blur(20px);
+    }
+
+    ol {
+      padding-left: 24px;
+      color: #b8b8d0;
+    }
+
+    li {
+      margin: 16px 0;
+      font-size: 1.05rem;
+    }
+
+    code {
+      background: rgba(102, 126, 234, 0.15);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: #a0a0ff;
+      font-family: 'Monaco', 'Consolas', monospace;
+    }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .tech-badge {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: #d0d0e8;
+    }
+
+    .layers-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 24px;
+    }
+
+    .layers-table th,
+    .layers-table td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .layers-table th {
+      background: rgba(102, 126, 234, 0.2);
+      color: #a0a0ff;
+      font-weight: 600;
+    }
+
+    .layers-table td {
+      color: #b8b8d0;
+    }
+
+    .layers-table tr:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .layer-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    footer {
+      margin-top: 80px;
+      text-align: center;
+      padding: 40px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    footer p {
+      color: #6b6b88;
+      font-size: 0.95rem;
+    }
+
+    footer a {
+      color: #a0a0ff;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    .highlight {
+      color: #a0a0ff;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .logo {
+        font-size: 2.8rem;
+      }
+
+      .tagline {
+        font-size: 1.2rem;
+      }
+
+      .container {
+        padding: 40px 16px;
+      }
+
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .layers-table {
+        font-size: 0.9rem;
+      }
+
+      .layers-table th,
+      .layers-table td {
+        padding: 12px 8px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1 class="logo">UnReal</h1>
+      <div class="tagline">Detect AI-generated content in real-time</div>
+      <p class="description">
+        UnReal is a powerful Chrome extension that helps you identify AI-generated <strong>text, images, and
+          videos</strong>
+        on any webpage. With multi-layer analysis, local ML, and explainable results — know what's real and what's not.
+      </p>
+
+      <div class="buttons">
+        <a class="btn primary" href="https://github.com/Rachit-Ingole/unreal-chrome-extension" target="_blank">
+          ⭐ View on GitHub
+        </a>
+        <a class="btn secondary" href="https://github.com/Rachit-Ingole/unreal-chrome-extension/archive/refs/heads/news.zip">
+          ⬇ Download ZIP
+        </a>
+        <a class="btn secondary" href="#install">
+          🚀 Install Guide
+        </a>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section">
+      <div class="section-title">
+        <h2>✨ Key Features</h2>
+      </div>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">📝</div>
+          <h3>AI Text Detection</h3>
+          <p>Identifies content generated by ChatGPT, GPT-4, Claude, and other LLMs using statistical patterns and local
+            ML analysis.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🖼️</div>
+          <h3>AI Image Detection</h3>
+          <p>Multi-layer analysis to detect DALL-E, Midjourney, and Stable Diffusion generated images through forensics
+            and metadata.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🎥</div>
+          <h3>Deepfake Video Analysis</h3>
+          <p>Server-side frame extraction and ML analysis to detect AI-generated or manipulated video content.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">📰</div>
+          <h3>Misinformation Detection</h3>
+          <p>Flags clickbait, conspiracy theories, fake news, and health/financial scams with pattern matching.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">📱</div>
+          <h3>Social Media Scanning</h3>
+          <p>Real-time feed analysis on Twitter/X, Facebook, Instagram, LinkedIn, Reddit, and TikTok.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🧠</div>
+          <h3>Explainable Results</h3>
+          <p>See exactly <em>why</em> content is flagged with segment highlighting and detailed analysis breakdowns.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Image Analysis Pipeline -->
+    <section class="section">
+      <div class="section-title">
+        <h2>🔬 Multi-Layer Image Analysis</h2>
+      </div>
+
+      <div class="install-card">
+        <p style="color: #b8b8d0; margin-bottom: 24px;">
+          UnReal uses a sophisticated 5-layer pipeline to analyze images for AI generation signatures:
+        </p>
+
+        <table class="layers-table">
+          <thead>
+            <tr>
+              <th>Layer</th>
+              <th>Name</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="layer-badge">0</span></td>
+              <td>Metadata Analysis</td>
+              <td>EXIF data extraction, software signatures, AI watermark detection</td>
+            </tr>
+            <tr>
+              <td><span class="layer-badge">1</span></td>
+              <td>Forensic Analysis</td>
+              <td>Error Level Analysis (ELA), noise pattern detection</td>
+            </tr>
+            <tr>
+              <td><span class="layer-badge">2</span></td>
+              <td>Mathematical Analysis</td>
+              <td>Frequency domain analysis, texture consistency checks</td>
+            </tr>
+            <tr>
+              <td><span class="layer-badge">3</span></td>
+              <td>Local ML</td>
+              <td>Optional CNN-based image classification</td>
+            </tr>
+            <tr>
+              <td><span class="layer-badge">4</span></td>
+              <td>Gemini AI</td>
+              <td>Vision model for final verification (optional)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section class="section" id="install">
+      <div class="section-title">
+        <h2>🚀 How to Install</h2>
+      </div>
+
+      <div class="install-card">
+        <ol>
+          <li>Download the repository from GitHub (<strong>Code → Download ZIP</strong>) or clone it</li>
+          <li>Extract the ZIP file to a folder</li>
+          <li>Open <code>chrome://extensions</code> in Chrome</li>
+          <li>Enable <strong>Developer Mode</strong> (toggle in top-right)</li>
+          <li>Click <strong>Load unpacked</strong></li>
+          <li>Select the <code>/extension</code> folder from the extracted files</li>
+          <li>Pin the extension for easy access</li>
+        </ol>
+
+        <h3 style="margin-top: 32px; margin-bottom: 16px; color: #a0a0ff;">🔧 Optional: Start ML Backend</h3>
+        <p style="color: #b8b8d0; margin-bottom: 16px;">For enhanced text detection with local ML:</p>
+        <ol>
+          <li>Navigate to <code>extension/backend</code> folder</li>
+          <li>Install dependencies: <code>pip install -r requirements.txt</code></li>
+          <li>Start the server: <code>python server.py</code></li>
+        </ol>
+
+        <h3 style="margin-top: 32px; margin-bottom: 16px; color: #a0a0ff;">🔑 Optional: Add Gemini API Key</h3>
+        <p style="color: #b8b8d0;">
+          For AI-powered verification, get a free key from
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: #a0a0ff;">Google AI Studio</a>
+          and add it in the extension settings.
+        </p>
+      </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section class="section">
+      <div class="section-title">
+        <h2>🛠️ Tech Stack</h2>
+      </div>
+
+      <div class="install-card" style="text-align: center;">
+        <div class="tech-stack" style="justify-content: center;">
+          <span class="tech-badge">Chrome Extension (Manifest V3)</span>
+          <span class="tech-badge">JavaScript ES6+</span>
+          <span class="tech-badge">Python Flask Backend</span>
+          <span class="tech-badge">RoBERTa ML Model</span>
+          <span class="tech-badge">Google Gemini AI</span>
+          <span class="tech-badge">PyTorch</span>
+          <span class="tech-badge">Hugging Face Transformers</span>
+          <span class="tech-badge">Canvas API (Forensics)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust Scoring -->
+    <section class="section">
+      <div class="section-title">
+        <h2>📊 Trust Scoring System</h2>
+      </div>
+
+      <div class="card-grid">
+        <div class="card" style="border-color: rgba(34, 197, 94, 0.5);">
+          <div class="card-icon">🟢</div>
+          <h3>Low Risk (0-24)</h3>
+          <p>Content appears authentic. No significant AI generation markers detected.</p>
+        </div>
+
+        <div class="card" style="border-color: rgba(251, 146, 60, 0.5);">
+          <div class="card-icon">🟠</div>
+          <h3>Medium Risk (25-54)</h3>
+          <p>Some suspicious patterns detected. Review with caution before sharing.</p>
+        </div>
+
+        <div class="card" style="border-color: rgba(239, 68, 68, 0.5);">
+          <div class="card-icon">🔴</div>
+          <h3>High Risk (55-100)</h3>
+          <p>Strong AI generation signals. Content likely synthetic or manipulated.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>
+        Built with ❤️ by <strong>Team TheGoogleGoats</strong> •
+        <a href="https://github.com/Rachit-Ingole/unreal-chrome-extension" target="_blank">GitHub</a> •
+        GDG hackathon
+      </p>
+      <p style="margin-top: 12px;">
+        Making the internet more trustworthy, one webpage at a time.
+      </p>
+    </footer>
+  </div>
+</body>
+
+</html>

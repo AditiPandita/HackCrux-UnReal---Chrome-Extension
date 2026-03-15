@@ -1,0 +1,69 @@
+{
+    "manifest_version": 3,
+    "name": "UnReal",
+    "version": "2.2.0",
+    "description": "Advanced AI detection with segment-based analysis - identify AI-generated content, manipulated media, and misinformation",
+    "permissions": [
+        "activeTab",
+        "storage",
+        "scripting"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "background": {
+        "service_worker": "backgroundNew.js",
+        "type": "module"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "contentNew.js"
+            ],
+            "run_at": "document_idle",
+            "type": "module"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "statisticalAnalyzer.js",
+                "segmentAnalyzer.js",
+                "visualHighlighter.js",
+                "cacheManager.js",
+                "imageDetector.js",
+                "layer0-metadata.js",
+                "layer1-forensic.js",
+                "layer2-mathematical.js",
+                "layer3-local-ml.js",
+                "layer4-gemini.js",
+                "imageAnalysisPipeline.js",
+                "videoAnalysisPipeline.js",
+                "patternDatabase.js",
+                "socialMediaScanner.js",
+                "headlineExtractor.js",
+                "newsVerifier.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "UnReal - AI Content Analyzer",
+        "default_icon": {
+            "16": "icons/icon16.svg",
+            "48": "icons/icon48.svg",
+            "128": "icons/icon128.svg"
+        }
+    },
+    "icons": {
+        "16": "icons/icon16.svg",
+        "48": "icons/icon48.svg",
+        "128": "icons/icon128.svg"
+    }
+}

@@ -1,0 +1,47 @@
+# Environment variables (not tracked in git)
+.env
+
+# Node modules
+node_modules/
+
+# Build files
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# ML Models (large binary files)
+extension/backend/model/
+extension/backend/social_media_tuned_model/
+
+# Datasets
+extension/backend/dataset/
+
+# SQLite databases
+*.db
+
+# Logs
+*.log
