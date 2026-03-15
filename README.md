@@ -100,8 +100,10 @@ Posts are analyzed as you scroll with inline risk indicators.
 
 ---
 
+
 ## 🗂️ Project Structure
 
+```bash
 
 UnReal-Extension-main
 │
