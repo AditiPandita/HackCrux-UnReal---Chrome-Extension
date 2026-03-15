@@ -205,7 +205,7 @@ Access settings by clicking the UnReal icon → **Settings (⚙️)**
 
 ### Analysis Pipeline
 
-```
+```bash
 Page Load
     ↓
 Extract Content (Text, Images, URLs)
