@@ -22,13 +22,11 @@
 
 - **AI Text Detection** - Identifies content from ChatGPT, GPT-4, Claude using RoBERTa ML model
 - **AI Image Detection** - Multi-layer analysis for DALL-E, Midjourney, Stable Diffusion images
-- **Video Deepfake Detection** - Frame-by-frame analysis with audio deepfake detection
 - **Fake News Detection** - Cross-references claims with trusted sources
 - **Manipulated Media** - Detects edited, photoshopped, or doctored content  
 - **Social Media Scanner** - Real-time scanning on Twitter/X, Facebook, Instagram, LinkedIn, Reddit, TikTok
 
-**🔗 Repository:** [https://github.com/ajharshal45/UnReal-Extension](https://github.com/ajharshal45/UnReal-Extension)
-
+**🔗 Repository:** 
 ---
 
 ## 🚀 Quick Start
@@ -45,7 +43,7 @@
    - Open Chrome and navigate to `chrome://extensions/`
    - Enable **Developer mode** (top-right toggle)
    - Click **Load unpacked**
-   - Select the `sharesafe/extension` folder
+   - Select the `/extension` folder
    - Pin the extension for easy access
 
 3. **Start browsing!** The extension works immediately in demo mode
@@ -54,13 +52,6 @@
 
 For enhanced accuracy using Google Gemini AI:
 
-1. Get a free API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. Click the UnReal extension icon
-3. Open **Settings** (gear icon)
-4. Paste your API key and **Save**
-5. Enable "LLM Tie-breaker" toggle
-
----
 
 ## ✨ Features
 
@@ -76,13 +67,7 @@ For enhanced accuracy using Google Gemini AI:
 - Breaks content into logical segments
 - Per-segment risk scoring
 - Visual highlighting of suspicious sections
-- Granular analysis for long-form content
-
-**3. AI-Powered Verification (Optional)**
-- Google Gemini integration as "tie-breaker"
-- Only activates for uncertain cases (score 35-65)
-- Provides context-aware final verdict
-- Respects your API quota
+- Granular analysis for long-form contentz
 
 ### 📊 Dynamic Trust Scoring
 
@@ -117,64 +102,75 @@ Posts are analyzed as you scroll with inline risk indicators.
 
 ## 🗂️ Project Structure
 
-```
-unreal-chrome-extension/
-├── extension/                        # Extension source code
-│   ├── manifest.json                # Extension manifest (V3)
-│   ├── popup.html / popup.js        # Extension popup interface & logic
-│   ├── settings.html / settings.js  # Settings configuration
-│   ├── contentNew.js                # Content script (page analysis)
-│   ├── backgroundNew.js             # Service worker (analysis engine)
-│   │
-│   ├── # Analysis Modules
-│   ├── statisticalAnalyzer.js       # Statistical pattern matching
-│   ├── segmentAnalyzer.js           # Segment-based text analysis
-│   ├── patternDatabase.js           # Detection patterns database
-│   │
-│   ├── # Image Analysis Pipeline (5 Layers)
-│   ├── imageAnalysisPipeline.js     # Image pipeline orchestrator
-│   ├── imageDetector.js             # Image scanner & coordinator
-│   ├── layer0-metadata.js           # EXIF & metadata analysis
-│   ├── layer1-forensic.js           # Error Level Analysis (ELA)
-│   ├── layer2-mathematical.js       # Frequency & texture analysis
-│   ├── layer3-local-ml.js           # Local ML model integration
-│   ├── layer4-gemini.js             # Gemini AI verification
-│   │
-│   ├── # Video & Audio Analysis
-│   ├── videoAnalysisPipeline.js     # Deepfake video detection
-│   │
-│   ├── # News & Social Media
-│   ├── newsVerifier.js              # Fake news detection
-│   ├── headlineExtractor.js         # News headline analysis
-│   ├── socialMediaScanner.js        # Social platform scanning
-│   │
-│   ├── # AI Integration
-│   ├── gemini.js                    # Google Gemini AI integration
-│   │
-│   ├── # UI & Utilities
-│   ├── visualHighlighter.js         # Visual highlighting UI
-│   ├── cacheManager.js              # Results caching system
-│   ├── config.js                    # Configuration settings
-│   ├── icons/                       # Extension icons
-│   │
-│   ├── # Backend (ML Server)
-│   ├── backend/
-│   │   ├── server.py                # Flask API server
-│   │   ├── text_detector.py         # AI text detection (RoBERTa)
-│   │   ├── audio_detector.py        # Audio deepfake detection
-│   │   ├── requirements.txt         # Python dependencies
-│   │   └── model/                   # ML model files
-│   │
-│   ├── BACKEND_SETUP.md             # Backend setup instructions
-│   └── README.md                    # Extension documentation
+
+UnReal-Extension-main
 │
-├── docs/                             # Landing page
-│   └── index.html                   # Product documentation page
+├── .qodo
+│   ├── agents
+│   └── workflows
 │
-├── test-fake-news.html              # Test page for fake news
-├── test-legitimate-news.html        # Test page for legitimate news
-└── README.md                        # Main project documentation
-```
+├── .venv
+│   ├── Include
+│   ├── Lib
+│   ├── Scripts
+│   └── share
+│
+├── docs
+│
+├── extension
+│   │
+│   ├── backend
+│   │
+│   ├── icons
+│   │
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── BACKEND_SETUP.md
+│   │
+│   ├── background.js
+│   ├── backgroundNew.js
+│   ├── cacheManager.js
+│   ├── config.js
+│   ├── content.js
+│   ├── contentNew.js
+│   │
+│   ├── gemini.js
+│   ├── headlineExtractor.js
+│   │
+│   ├── imageAnalysisPipeline.js
+│   ├── imageDetector.js
+│   │
+│   ├── layer0-metadata.js
+│   ├── layer1-forensic.js
+│   ├── layer2-mathematical.js
+│   ├── layer3-local-ml.js
+│   ├── layer4-gemini.js
+│   │
+│   ├── manifest.json
+│   │
+│   ├── newsVerifier.js
+│   ├── patternDatabase.js
+│   │
+│   ├── popup.html
+│   ├── popup.js
+│   │
+│   ├── segmentAnalyzer.js
+│   ├── settings.html
+│   ├── settings.js
+│   │
+│   ├── setupCredentials.js
+│   ├── socialMediaScanner.js
+│   ├── statisticalAnalyzer.js
+│   │
+│   ├── videoAnalysisPipeline.js
+│   └── visualHighlighter.js
+│
+├── README.md
+├── LICENSE
+├── .gitignore
+│
+├── test-fake-news.html
+└── test-legitimate-news.html
 
 ---
 
@@ -201,7 +197,6 @@ Access settings by clicking the UnReal icon → **Settings (⚙️)**
 6. Enable "LLM Tie-breaker" toggle
 
 **Note:** LLM is only used for scores between 35-65 to save API quota.
-
 ---
 
 ## 🧠 How It Works
@@ -239,6 +234,7 @@ Display Badge + Notification
 - "Photoshopped", "Edited", "Manipulated"
 - "Doctored", "Altered", "Fake"
 
+
 #### Misinformation Markers
 - "Shocking truth", "They don't want you to know"
 - "Secret revealed", "This one trick"
@@ -249,7 +245,7 @@ Display Badge + Notification
 - "Resurfaced", "Not what it seems"
 
 #### Trusted Sources (Score Reduction)
-- Reuters, AP News, BBC
+- Reuters, AP News, BBC, Times of India, News 18, MoneyControl
 - Snopes, FactCheck.org
 - Academic journals (.edu, .gov)
 
@@ -263,13 +259,6 @@ Display Badge + Notification
 2. **Check the badge** - Appears in bottom-right corner with risk level
 3. **Read details** - Click extension icon for full analysis report
 4. **View segments** - Click badge to highlight risky text sections
-
-### Social Media Scanning
-
-1. Open Twitter, Facebook, or any supported platform
-2. Scroll through your feed
-3. Watch for inline badges on posts
-4. Hover over badges for quick risk summary
 
 ### Clear Cache
 
@@ -293,7 +282,7 @@ If you notice stale results:
 ```bash
 # Clone repository
 git clone <repository-url>
-cd sharesafe/extension
+cd /extension
 
 # Make changes to files
 # Edit contentNew.js, backgroundNew.js, etc.
@@ -309,18 +298,14 @@ cd sharesafe/extension
 ### Testing
 
 1. **Test Statistical Analysis**
-   - Visit pages with known AI-generated content
+   - Visit pages with known AI-generated content or visit ai generated image (person does not exist)
    - Check if badges appear with appropriate scores
 
 2. **Test AI Integration**
-   - Add API key in settings
    - Visit ambiguous content
    - Verify AI tie-breaker activates (check console logs)
 
-3. **Test Social Media**
-   - Open Twitter/Facebook
-   - Scroll through feed
-   - Verify inline badges appear
+
 
 ### Debugging
 
@@ -458,11 +443,6 @@ Contributions are welcome! Here's how to help:
 - 📊 Trust scoring system
 - 🔔 Notification system
 
----
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
@@ -494,7 +474,7 @@ For issues, questions, or suggestions:
 
 <div align="center">
 
-**Built with ❤️ by Team TheGoogleGoats for GDG hackathon**
+**Built with ❤️ by Team CodeCrafters. for GDG hackathon**
 
 Making the internet more trustworthy, one webpage at a time
 
